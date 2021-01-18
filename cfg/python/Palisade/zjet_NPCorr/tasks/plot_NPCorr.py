@@ -8,7 +8,7 @@ from Karma.PostProcessing.Palisade import (
     LegendHandlerString, LegendHandlerTuple
 )
 
-from PlottingNPCorr.cfg.Palisade import EXPANSIONS, SPLITTINGS, QUANTITIES, FONTPROPERTIES, TEXTS
+from PlottingNPCorr.cfg.Palisade.zjet_NPCorr import EXPANSIONS, SPLITTINGS, QUANTITIES, FONTPROPERTIES, TEXTS
 
 from matplotlib.font_manager import FontProperties
 
