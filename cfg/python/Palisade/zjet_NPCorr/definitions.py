@@ -13,7 +13,7 @@ QUANTITIES = {
             'name': 'PhiStarEta', # name as displayed in the root file
             'label': '$\\Phi^{*}_{\\eta}$', # desired label on the axis
             'scale': 'log', # scale of the axis in the plot
-            'expected_values': 91.1876 # position for a marker (optional)
+            'expected_values': (91.1876,) # position for a marker (optional) (must be iterable!)
         },
         'zpt': {
             'name': 'ZPt',
@@ -25,7 +25,8 @@ QUANTITIES = {
 
 _QUANTITY_EXPECTED_VALUES = {
     # used to mark the approximate value of the factorization scale
-    'zpt' : 91.1876,
+    # make sure to define a tuple!
+    'zpt' : (91.1876,),
 }
 
 # define generic LaTeX labels for some quantities
@@ -150,9 +151,9 @@ EXPANSIONS['quantity'] = [
         'name' : _q.get('name', _qn),
         'label' : _q.get('scale', _QUANTITY_LABELS.get(_qn, _qn)),
         'scale' : _q.get('scale', _QUANTITY_SCALES.get(_qn, 'linear')),
-        'expected_values' : list(_q.get('expected_values', _QUANTITY_EXPECTED_VALUES.get(_qn, []) ) ),
+        'expected_values' : list(_q.get('expected_values', _QUANTITY_EXPECTED_VALUES.get(_qn, ()) )),
     }
-    for _qn, _q in QUANTITIES['zjet'].iteritems()
+    for _qn, _q in QUANTITIES['global'].iteritems()
 ]
 
 # build basic sample expansion
