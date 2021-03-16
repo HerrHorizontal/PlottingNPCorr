@@ -71,7 +71,7 @@ LEGEND_KWARGS = dict(
 def get_config(directory_name, channel, sample_names, quantities, split_quantity, basename_fullsim, basename_noNP, file_suffix_fullsim, file_suffix_noNP, output_format, info_labels, upper_label):
     """
     function to create configurations for the plots
-    :param directory_name:      Name of the analysis which produced the histograms or identifying prefix
+    :param directory_name:      Name of the analysis which produced the histograms or identifying prefix in the ROOT file
     :param channel:             Lepton channel of the corresponding data
     :param sample_names:        Name of the samples
     :param quantities:          Quantities to plot 
@@ -92,7 +92,7 @@ def get_config(directory_name, channel, sample_names, quantities, split_quantity
         raise ValueError("Unknown samples: {}".format(', '.join(_unknown_quantities)))
 
     # raise exception if quantities specified are unknown
-    _unknown_quantities = set(quantities).difference(QUANTITIES['global'].keys())
+    _unknown_quantities = set(quantities).difference(_q['name'] for _q in QUANTITIES['global'].values())
     if _unknown_quantities:
         raise ValueError("Unknown quantities: {}".format(', '.join(_unknown_quantities)))
 
@@ -144,7 +144,7 @@ def get_config(directory_name, channel, sample_names, quantities, split_quantity
     elif split_quantity == 'yboost':
         _expansions.update({'split': [
             dict(name=_k,
-                 label=r"${}\leq y^{{\mathrm{{b}}}}<{}$".format(_v['yboost'][0], _v['yboost'][1]))
+                 label=r"${}\leq y_{{\mathrm{{b}}}}<{}$".format(_v['yboost'][0], _v['yboost'][1]))
             for _k, _v in SPLITTINGS['zpt'].iteritems()]})
     elif split_quantity is None:
         _expansions['split'] = [
@@ -155,12 +155,13 @@ def get_config(directory_name, channel, sample_names, quantities, split_quantity
         _expansions.update({'split': [
             dict(name=_k1+_k2,
                  label=(
-                     r"${}\leq y^{{\mathrm{{b}}}}<{}$".format(_v2['yboost'][0], _v2['yboost'][1]) + 
+                     r"${}\leq y_{{\mathrm{{b}}}}<{}$".format(_v2['yboost'][0], _v2['yboost'][1]) + 
                      r", ${}\leq y^{{*}}<{}$".format(_v1['ystar'][0], _v1['ystar'][1])
                  )
             )
             for _k1, _v1 in SPLITTINGS['ystar'].iteritems()
             for _k2, _v2 in SPLITTINGS['yboost'].iteritems()
+            if _v1['ystar'][0]+_v2['yboost'][0] <= 2
         ]})
     else:
         raise ValueError('Expansions not implemented for split quantity {}!'.format(split_quantity))
@@ -283,7 +284,7 @@ def cli(argument_parser):
     argument_parser.add_argument('-c', '--channels', help="name of the (lepton) channel, e.g. 'mm'", nargs='+',
                                  default=['mm', 'ee'], choices=['mm', 'ee'], metavar="CHANNEL")
     argument_parser.add_argument('-q', '--quantities', help="quantities to plot", nargs='+',
-                                 choices=QUANTITIES['global'].keys(), metavar="QUANTITIES")
+                                 choices=[_q.get('name') for _q in QUANTITIES['global'].values()], metavar="QUANTITIES")
     argument_parser.add_argument('--basename-fullsim', 
                                  help="prefix for (path to) ROOT files containing histograms from full simulation",
                                  required=True,
@@ -292,7 +293,7 @@ def cli(argument_parser):
                                  help="prefix for (path to) ROOT files containing histograms from simulation with turned-off non-perturbative part", 
                                  required=True,
                                  metavar="DIRNAME_OF_NPOFF_FILES")
-    argument_parser.add_argument('--suffix_fullsim', help="suffix of the ROOT files containing fullsim histograms", default="")
+    argument_parser.add_argument('--suffix-fullsim', help="suffix of the ROOT files containing fullsim histograms", default="")
     argument_parser.add_argument('--suffix-noNP', help="suffix of the ROOT files containing histograms with turned-off non-perturbative part", default="NPoff")
     argument_parser.add_argument('--split-quantity', help='split quantity: ystar, yboost or both',
                                  choices=['ystar', 'yboost', 'ystar*yboost'], default=None)
@@ -325,7 +326,7 @@ def run(args):
             basename_fullsim=args.basename_fullsim,
             basename_noNP=args.basename_noNP,
             file_suffix_fullsim=args.suffix_fullsim, 
-            file_suffix_noNP=suffix_noNP,
+            file_suffix_noNP=args.suffix_noNP,
             output_format=args.output_format,
             info_labels=args.info_labels,
             upper_label=args.upper_label)

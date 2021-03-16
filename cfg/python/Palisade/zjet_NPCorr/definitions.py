@@ -17,7 +17,7 @@ QUANTITIES = {
         },
         'zpt': {
             'name': 'ZPt',
-            'label': '$p_{\\mathrm{T}}^{\\mathrm{Z}}$GeV',
+            'label': '$p_{\\mathrm{T}}^{\\mathrm{Z}}$ / GeV',
             'scale': 'log',
         },
     },
@@ -86,11 +86,11 @@ _YBOOST_BIN_EDGES = [0., 0.5, 1., 1.5, 2., 2.5]
 SPLITTINGS = {}
 
 SPLITTINGS['ystar'] = dict({
-    "Ys_{:-f}".format(_low): dict(ystar=(_low, _high))
+    "Ys{:-f}".format(_low): dict(ystar=(_low, _high))
     for _low, _high in zip(_YSTAR_BIN_EDGES[:-1], _YSTAR_BIN_EDGES[1:])
 })
 SPLITTINGS['yboost'] = dict({
-    "Yb_{:-f}".format(_low): dict(yboost=(_low, _high))
+    "Yb{:-f}".format(_low): dict(yboost=(_low, _high))
     for _low, _high in zip(_YBOOST_BIN_EDGES[:-1], _YBOOST_BIN_EDGES[1:])
 })
 
@@ -149,7 +149,7 @@ EXPANSIONS = {}
 EXPANSIONS['quantity'] = [
     {
         'name' : _q.get('name', _qn),
-        'label' : _q.get('scale', _QUANTITY_LABELS.get(_qn, _qn)),
+        'label' : _q.get('label', _QUANTITY_LABELS.get(_qn, _qn)),
         'scale' : _q.get('scale', _QUANTITY_SCALES.get(_qn, 'linear')),
         'expected_values' : list(_q.get('expected_values', _QUANTITY_EXPECTED_VALUES.get(_qn, ()) )),
     }
